@@ -169,7 +169,7 @@ variables:
 
 sequence:
   # save current state so we can restore to whatever was happening previously
-  - service: sonos.snapshot
+  - action: sonos.snapshot
     data:
       entity_id: "{{ entity_group_leader }}"
       with_group: true
@@ -183,7 +183,7 @@ sequence:
               {{ is_state(entity_group_leader, 'playing') }}
         sequence:
           # so we pause (using the leader, since that will cover all)
-          - service: media_player.media_pause
+          - action: media_player.media_pause
             data:
               entity_id: "{{ entity_group_leader }}"
           # do a quick to make sure it isn't playing
@@ -201,7 +201,7 @@ sequence:
       - conditions: >
           {{ entity_repeat_state != "off" }}
         sequence:
-          - service: media_player.repeat_set
+          - action: media_player.repeat_set
             data:
               repeat: "off"
               entity_id: "{{ entity_group_leader }}"
@@ -216,14 +216,14 @@ sequence:
           {{ volume_level is defined and volume_level != None and volume_level is number }}
         sequence:
           # now we can set the set the volume
-          - service: media_player.volume_set
+          - action: media_player.volume_set
             data:
               volume_level: "{{ volume_level }}"
               entity_id: >
                 {{ entity_group }}
 
   # force to unmute, just in case, since mute IS different than volume
-  - service: media_player.volume_mute
+  - action: media_player.volume_mute
     data:
       entity_id: >
         {{ entity_group }}
@@ -231,7 +231,7 @@ sequence:
 
   # FINALLY the actual call to say the message
   # https://www.home-assistant.io/integrations/tts/
-  - service: tts.speak
+  - action: tts.speak
     target:
       entity_id: "{{ tts_engine }}"
     data:
@@ -242,7 +242,7 @@ sequence:
   # not sure why, but setting the repeat doesn't always properly take
   # I can see it changing in the state  when the TTY goes the repeat
   # turns back on ... calling to turn off again helps
-  - service: media_player.repeat_set
+  - action: media_player.repeat_set
     data:
       repeat: "off"
       entity_id: "{{ entity_group_leader }}"
@@ -286,7 +286,7 @@ sequence:
   # and now we restore where we were which should cover repeat, what's playing, etc.
   # NOTE: so far this works when driven by Sonos or HA, but when driven from Alexa
   #       it doesn't seem to work as well
-  - service: sonos.restore
+  - action: sonos.restore
     data:
       entity_id: "{{ entity_group_leader }}"
       with_group: true
