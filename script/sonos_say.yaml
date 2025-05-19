@@ -31,7 +31,7 @@ blueprint:
       description:
         The text-to-speech service to use when saying the message. This must match your Home
         Assistant configuration.
-      default: "google_translate_say"
+      default: "cloud_say"
       selector:
         text:
     tts_language:
@@ -144,7 +144,7 @@ variables:
   tts_hack: !input tts_service_name
   tts_engine: >-
     {%- if tts_hack is undefined or tts_hack== None or tts_hack == "" -%}
-      tts.google_translate_say
+      tts.cloud_say
     {%- else -%}
       tts.{{ tts_hack }}
     {%- endif -%}
@@ -237,8 +237,7 @@ sequence:
     data:
       media_player_entity_id: "{{ entity_group_leader }}"
       message: "{{ message }}"
-      language: "{{ tts_language }}"
-
+    
   # not sure why, but setting the repeat doesn't always properly take
   # I can see it changing in the state  when the TTY goes the repeat
   # turns back on ... calling to turn off again helps
